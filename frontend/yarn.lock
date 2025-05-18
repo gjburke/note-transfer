@@ -792,6 +792,11 @@ postcss@^8.4.41, postcss@^8.5.3:
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
+prettier-plugin-svelte@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/prettier-plugin-svelte/-/prettier-plugin-svelte-3.4.0.tgz#ed0a860b22d39682c1db5c2a210b3db073b4f689"
+  integrity sha512-pn1ra/0mPObzqoIQn/vUTR3ZZI6UuZ0sHqMK5x2jMLGrs53h0sXhkVuDcrlssHwIMk7FYrMjHBPoUSyyEEDlBQ==
+
 prettier-plugin-tailwindcss@^0.6.11:
   version "0.6.11"
   resolved "https://registry.yarnpkg.com/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.6.11.tgz#cfacd60c4f81997353ee913e589037f796df0f5f"
