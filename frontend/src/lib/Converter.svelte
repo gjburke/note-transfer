@@ -68,8 +68,8 @@
     }
 </script>
 
-<div class="flex h-[75vh] w-[75vw] flex-row text-left">
-    <div class="m-5 flex h-full flex-1 flex-col rounded-xl bg-slate-600/30 p-5">
+<div class="flex h-[75vh] w-[75vw] flex-row flex-wrap text-left">
+    <div class="min-w-[400px] m-5 flex h-full flex-1 flex-col rounded-xl bg-slate-600/30 p-5">
         <div>
             <label for="notes">Choose your notes:</label>
             <div class="flex-column flex w-full justify-between">
@@ -99,7 +99,7 @@
             </ul>
         </div>
     </div>
-    <div class="m-5 flex h-full flex-1 flex-col rounded-xl bg-slate-600/30 p-5">
+    <div class="min-w-[400px] m-5 flex h-full flex-1 flex-col rounded-xl bg-slate-600/30 p-5">
         <h2>Here are your results:</h2>
         <div class="flex-1 overflow-auto">
             <ul class="list-inside list-none">

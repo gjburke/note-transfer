@@ -5,7 +5,7 @@
 </script>
 
 <main>
-    <header><h1>Vite + Svelte</h1></header>
+    <header><h1>Note Transfer</h1></header>
     <div>
         <Converter />
     </div>
