@@ -26,24 +26,26 @@
             return;
         }
 
-        // Build form data to send to server
-        let formData = new FormData();
-        files.forEach((file) => formData.append('files', file));
+        // Process each file individually
+        files.forEach((file) => {
+            // Create form to send file
+            const formData = new FormData();
+            formData.append('file', file);
 
-        // Send, Process Files 
-        if (!sendFiles(formData)) {
-            return;
-        } 
+            // Process file
+            const result = processFile(formData);
+        });
     }
 
-    async function sendFiles(formData: FormData) {
+    async function processFile(formData: FormData) {
         // Send to server
         const url = 'http://127.0.0.1:8000'
-        const result = await fetch(url + "/upload_files/", {
+        const result = await fetch(url + "/process_file/", {
             method: 'post',
             body: formData,
         });
-
+        
+        // Check for any issues 
         if (!result.ok) {
             console.error('Bad response to file upload');
             return false;
