@@ -4,7 +4,7 @@ import shutil
 
 from pydantic import BaseModel
 
-from fastapi import FastAPI, File, UploadFile, Response
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 #from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,10 +28,10 @@ FILES_FOLDER = os.path.join(os.getcwd(), 'files')
 os.makedirs(FILES_FOLDER, exist_ok=True)
 
 @app.post("/process_file/")
-async def process_file(file: UploadFile = File(...)) -> Response:
+async def process_file(file: UploadFile = File(...)):
     # Handling the input
     if not file:
-        return JSONResponse(content={"error" : "No file sent"}, status_code=400)
+        return HTTPException(detail="No file sent", status_code=400)
 
     # Saving the files
     # Should proabbly worry about unqiue names, paths, etc eventually
@@ -40,4 +40,4 @@ async def process_file(file: UploadFile = File(...)) -> Response:
     with open(file_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
             
-    return Response()
+    return JSONResponse(content={"markdown": f"We processed {file.filename}"}, status_code=200)
