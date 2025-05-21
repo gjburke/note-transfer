@@ -20,7 +20,7 @@
         files = Array.from(inputFiles);
     }
 
-    async function handleFilesSubmit() {
+    async function handleFilesSubmit() { // Hanlde file not existing?
         // Input checking
         if (files.length == 0) {
             console.error('No files selected');
