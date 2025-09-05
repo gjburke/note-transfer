@@ -5,5 +5,7 @@ __pycache__
 *.py[cod]
 images/*
 dataset/*
+large-section-dataset/*
 runs/*
+runs
 *.pt
