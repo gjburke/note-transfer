@@ -4,7 +4,6 @@ __pycache__
 **/__pycache__/
 *.py[cod]
 images/*
-dataset/*
-large-section-dataset/*
+datasets/*
 runs/*
 *.pt
