@@ -7,3 +7,4 @@ images/*
 datasets/*
 runs/*
 *.pt
+working/*
