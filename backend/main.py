@@ -13,6 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from transformers import pipeline
 
+from pipeline.config import *
+from pipeline.segmentation import load_seg_model, get_page_segmentations
 
 # Setting up logger
 logger = logging.getLogger('uvicorn.error')
@@ -38,6 +40,8 @@ os.makedirs(FILES_FOLDER, exist_ok=True)
 # Load model
 # use is pipe(<image data>)
 transfer = pipeline("image-to-text", model="microsoft/trocr-base-handwritten")
+section_model = load_seg_model(SECTION_MODEL_PATH)
+line_model = load_seg_model(LINE_MODEL_PATH)
 
 @app.post("/process_file/")
 async def process_file(file: UploadFile = File(...)):
@@ -51,6 +55,14 @@ async def process_file(file: UploadFile = File(...)):
     contents = await file.read()
     np_image_array = np.frombuffer(contents, np.uint8)
     image = cv2.imdecode(np_image_array, cv2.IMREAD_ANYCOLOR)
+
+    segmentations = get_page_segmentations(
+        image=image,
+        section_model=section_model,
+        line_model=line_model
+    )
+
+    print(segmentations)
 
     # Save new file
     # with open(file_path, "wb") as f: 
