@@ -47,3 +47,8 @@ h1 {
     padding: 2rem;
     text-align: center;
 }
+
+.text-output {
+    white-space: pre-wrap; /* preserves \n and wraps long lines */
+    word-wrap: break-word;
+}

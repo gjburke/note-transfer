@@ -2,17 +2,24 @@ import logging
 import os
 import tempfile
 import shutil
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from anytree import RenderTree
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 #from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
-from transformers import pipeline
-
+from pipeline.config import *
+from pipeline.segmentation import load_seg_model, get_page_segmentations
+from pipeline.structure import get_root, parse_page
+from pipeline.recognition import load_text_model, detect_text
+from pipeline.conversion import markdown_from_nodes
 
 # Setting up logger
-logger = logging.getLogger('uvicorn.error')
+logger = logging.getLogger("uvicorn.error")
 logger.setLevel(logging.DEBUG)
 
 # Setting up FastAPI App
@@ -29,12 +36,14 @@ app.add_middleware(
 )
 
 # Settign up files folder for saving files (may be depreciated)
-FILES_FOLDER = os.path.join(os.getcwd(), 'files')
+FILES_FOLDER = os.path.join(os.getcwd(), "files")
 os.makedirs(FILES_FOLDER, exist_ok=True)
 
 # Load model
 # use is pipe(<image data>)
-transfer = pipeline("image-to-text", model="microsoft/trocr-base-handwritten")
+text_model = load_text_model()
+section_model = load_seg_model(SECTION_MODEL_PATH)
+line_model = load_seg_model(LINE_MODEL_PATH)
 
 @app.post("/process_file/")
 async def process_file(file: UploadFile = File(...)):
@@ -42,24 +51,28 @@ async def process_file(file: UploadFile = File(...)):
     if not file:
         return HTTPException(detail="No file sent", status_code=400)
 
-    # Should proabbly worry about unqiue names, paths, etc eventually
-    file_path = os.path.join(FILES_FOLDER, file.filename)
+    contents = await file.read()
+    np_image_array = np.frombuffer(contents, np.uint8)
+    image = cv2.imdecode(np_image_array, cv2.IMREAD_ANYCOLOR)
 
-    # Save new file
-    with open(file_path, "wb") as f: 
-        shutil.copyfileobj(file.file, f)
+    # Pipeline to md
+    segmentations = get_page_segmentations(
+        image=image,
+        section_model=section_model,
+        line_model=line_model
+    )
 
-    # Process using text recognition
-    result = transfer(file_path)
-    if not result:
-        os.remove(file_path)
-        return HTTPException(detail="No text detected", status_code=500)
+    document_root = get_root()
+    parse_page(document_root, segmentations, image.shape[0], image.shape[1])
 
-    text = result[0]['generated_text']
+    detect_text(document_root, text_model)
 
-    os.remove(file_path)
+    md = markdown_from_nodes(document_root)
+
+    print(f"{md}")
+
     return JSONResponse(
-        content={"markdown": text}, 
+        content={"markdown": md}, 
         status_code=200
     )
 
