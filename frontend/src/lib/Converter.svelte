@@ -104,7 +104,9 @@
         <div class="flex-1 overflow-auto">
             <ul class="list-inside list-none">
                 {#each markdowns as md}
-                    <li class="mt-1 rounded bg-gray-600 p-1">{md}</li>
+                    <li class="mt-1 rounded bg-gray-600 p-1">
+                        <pre class="text-output">{md}</pre>
+                    </li>
                 {/each}
             </ul>
         </div>

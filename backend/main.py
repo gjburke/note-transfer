@@ -72,7 +72,7 @@ async def process_file(file: UploadFile = File(...)):
     print(f"{md}")
 
     return JSONResponse(
-        content={"markdown": f"{md}"}, 
+        content={"markdown": md}, 
         status_code=200
     )
 
