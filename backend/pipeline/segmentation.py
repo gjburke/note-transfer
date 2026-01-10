@@ -61,17 +61,17 @@ def get_page_segmentations(image, section_model, line_model):
 
     section_result = section_model.predict(image, iou=0.5, agnostic_nms=True)
     if section_result is None or len(section_result) == 0:
-        print('No result!')
+        print("No result!")
     section_result = section_result[0]
     if section_result.obb is None:
-        print('No OBB!')
+        print("No OBB!")
 
     for class_id, xywhr in sorted(list(zip(section_result.obb.cls, section_result.obb.xywhr)), key=lambda res: res[1][1]): # Iterate by descending height
         # First step is the section
         cropped_image = crop_from_obb(image, xywhr)
 
         if cropped_image.shape[0] == 0 or cropped_image.shape[1] == 0:
-            print(f'Incompatible crop: {cropped_image.shape}')
+            print(f"Incompatible crop: {cropped_image.shape}")
             continue
 
         sec_class_name = section_result.names[int(class_id)]
@@ -97,15 +97,15 @@ def get_page_segmentations(image, section_model, line_model):
         line_result = line_model.predict(cropped_image, iou=0.4, agnostic_nms=True)
 
         if line_result is None or len(line_result) == 0:
-            print('No line result!')
+            print("No line result!")
         line_result = line_result[0]
         if line_result.boxes is None:
-            print('No boxes!')
+            print("No boxes!")
 
         for class_id, xyxy in sorted(list(zip(line_result.boxes.cls, line_result.boxes.xyxy)), key=lambda x: x[1][1]): # Sorted by height
             cropped_line = crop_from_bb(cropped_image, xyxy)
             if cropped_line.shape[0] == 0 or cropped_line.shape[1] == 0:
-                print(f'Incompatible crop: {cropped_line.shape}')
+                print(f"Incompatible crop: {cropped_line.shape}")
                 continue
             
             line_class_name = line_result.names[int(class_id)]

@@ -12,11 +12,10 @@ from fastapi.responses import JSONResponse
 #from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
-from transformers import pipeline
-
 from pipeline.config import *
 from pipeline.segmentation import load_seg_model, get_page_segmentations
 from pipeline.structure import get_root, parse_page
+from pipeline.recognition import load_text_model, detect_text
 
 # Setting up logger
 logger = logging.getLogger('uvicorn.error')
@@ -41,7 +40,7 @@ os.makedirs(FILES_FOLDER, exist_ok=True)
 
 # Load model
 # use is pipe(<image data>)
-transfer = pipeline("image-to-text", model="microsoft/trocr-base-handwritten")
+text_model = load_text_model()
 section_model = load_seg_model(SECTION_MODEL_PATH)
 line_model = load_seg_model(LINE_MODEL_PATH)
 
@@ -67,8 +66,12 @@ async def process_file(file: UploadFile = File(...)):
     document_root = get_root()
     parse_page(document_root, segmentations, image.shape[0], image.shape[1])
 
+    detect_text(document_root, text_model)
+
     for pre, fill, node in RenderTree(document_root):
         print(f"{pre}{node.name}")
+        if node.cls_id == 3:
+            print(node.text)
 
     # Save new file
     # with open(file_path, "wb") as f: 
