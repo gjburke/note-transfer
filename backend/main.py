@@ -16,9 +16,10 @@ from pipeline.config import *
 from pipeline.segmentation import load_seg_model, get_page_segmentations
 from pipeline.structure import get_root, parse_page
 from pipeline.recognition import load_text_model, detect_text
+from pipeline.conversion import markdown_from_nodes
 
 # Setting up logger
-logger = logging.getLogger('uvicorn.error')
+logger = logging.getLogger("uvicorn.error")
 logger.setLevel(logging.DEBUG)
 
 # Setting up FastAPI App
@@ -35,7 +36,7 @@ app.add_middleware(
 )
 
 # Settign up files folder for saving files (may be depreciated)
-FILES_FOLDER = os.path.join(os.getcwd(), 'files')
+FILES_FOLDER = os.path.join(os.getcwd(), "files")
 os.makedirs(FILES_FOLDER, exist_ok=True)
 
 # Load model
@@ -50,13 +51,11 @@ async def process_file(file: UploadFile = File(...)):
     if not file:
         return HTTPException(detail="No file sent", status_code=400)
 
-    # Should proabbly worry about unqiue names, paths, etc eventually
-    # file_path = os.path.join(FILES_FOLDER, file.filename)
-
     contents = await file.read()
     np_image_array = np.frombuffer(contents, np.uint8)
     image = cv2.imdecode(np_image_array, cv2.IMREAD_ANYCOLOR)
 
+    # Pipeline to md
     segmentations = get_page_segmentations(
         image=image,
         section_model=section_model,
@@ -68,26 +67,12 @@ async def process_file(file: UploadFile = File(...)):
 
     detect_text(document_root, text_model)
 
-    for pre, fill, node in RenderTree(document_root):
-        print(f"{pre}{node.name}")
-        if node.cls_id == 3:
-            print(node.text)
+    md = markdown_from_nodes(document_root)
 
-    # Save new file
-    # with open(file_path, "wb") as f: 
-    #     shutil.copyfileobj(file.file, f)
+    print(f"{md}")
 
-    # # Process using text recognition
-    # result = transfer(file_path)
-    # if not result:
-    #     os.remove(file_path)
-    #     return HTTPException(detail="No text detected", status_code=500)
-
-    # text = result[0]['generated_text']
-
-    # os.remove(file_path)
     return JSONResponse(
-        content={"markdown": "hello"}, 
+        content={"markdown": f"{md}"}, 
         status_code=200
     )
 
