@@ -5,6 +5,7 @@ import shutil
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from anytree import RenderTree
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
@@ -15,6 +16,7 @@ from transformers import pipeline
 
 from pipeline.config import *
 from pipeline.segmentation import load_seg_model, get_page_segmentations
+from pipeline.structure import get_root, parse_page
 
 # Setting up logger
 logger = logging.getLogger('uvicorn.error')
@@ -62,7 +64,11 @@ async def process_file(file: UploadFile = File(...)):
         line_model=line_model
     )
 
-    print(segmentations)
+    document_root = get_root()
+    parse_page(document_root, segmentations, image.shape[0], image.shape[1])
+
+    for pre, fill, node in RenderTree(document_root):
+        print(f"{pre}{node.name}")
 
     # Save new file
     # with open(file_path, "wb") as f: 
