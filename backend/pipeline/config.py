@@ -1,0 +1,3 @@
+# Models
+SECTION_MODEL_PATH = r""
+LINE_MODEL_PATH = r""

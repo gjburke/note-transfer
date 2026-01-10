@@ -2,6 +2,9 @@ import logging
 import os
 import tempfile
 import shutil
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
@@ -43,23 +46,27 @@ async def process_file(file: UploadFile = File(...)):
         return HTTPException(detail="No file sent", status_code=400)
 
     # Should proabbly worry about unqiue names, paths, etc eventually
-    file_path = os.path.join(FILES_FOLDER, file.filename)
+    # file_path = os.path.join(FILES_FOLDER, file.filename)
+
+    contents = await file.read()
+    np_image_array = np.frombuffer(contents, np.uint8)
+    image = cv2.imdecode(np_image_array, cv2.IMREAD_ANYCOLOR)
 
     # Save new file
-    with open(file_path, "wb") as f: 
-        shutil.copyfileobj(file.file, f)
+    # with open(file_path, "wb") as f: 
+    #     shutil.copyfileobj(file.file, f)
 
-    # Process using text recognition
-    result = transfer(file_path)
-    if not result:
-        os.remove(file_path)
-        return HTTPException(detail="No text detected", status_code=500)
+    # # Process using text recognition
+    # result = transfer(file_path)
+    # if not result:
+    #     os.remove(file_path)
+    #     return HTTPException(detail="No text detected", status_code=500)
 
-    text = result[0]['generated_text']
+    # text = result[0]['generated_text']
 
-    os.remove(file_path)
+    # os.remove(file_path)
     return JSONResponse(
-        content={"markdown": text}, 
+        content={"markdown": "hello"}, 
         status_code=200
     )
 
