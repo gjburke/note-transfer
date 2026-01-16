@@ -1,0 +1,39 @@
+# Python bytecode (anywhere)
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Git
+.git/
+.gitignore
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Tests & local tooling
+tests/
+pytest_cache/
+
+# Logs
+*.log
+
+# Node / frontend (important for monorepo)
+node_modules/
+frontend/
+
+# Env files (use secrets instead)
+.env
+.env.*
+
+# Docker files not needed inside image
+Dockerfile
+docker-compose.yml
