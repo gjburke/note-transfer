@@ -26,7 +26,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost:5173",
-    "https://note-transfer-gjburke.vercel.app/",
+    "https://note-transfer-gjburke.vercel.app",
 ]
 
 app.add_middleware(
