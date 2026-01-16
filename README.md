@@ -2,6 +2,8 @@
 
 ## Current Progress
 
+You can find the website at <https://note-transfer-gjburke.vercel.app/>
+
 Have a website that has the proper pipelines/structure set up,
 but is very bad at transferring written notes to markdown.
 It still needs a lot of work on model training and fine-tuning, but
@@ -22,7 +24,7 @@ The markdown output is then displayed to the user, where they can copy it.
 Tech Stack
 
 - Frontend: Svelte, TypeScript, Tailwind
-- Backend: Python, FastAPI, Uvicorn
+- Backend: Python, FastAPI, Uvicorn, Docker
 - Modelling: Ultralytics YOLO, HuggingFace, Microsoft TrOCR
 
 Next Focus
