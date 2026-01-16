@@ -48,7 +48,7 @@
 
     async function processFile(formData: FormData) {
         // Send to server
-        const url = 'http://127.0.0.1:8000';
+        const url = 'https://note-transfer-backend-376291047933.us-central1.run.app';
         const result = await fetch(url + '/process_file/', {
             method: 'post',
             body: formData,

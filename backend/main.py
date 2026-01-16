@@ -1,7 +1,6 @@
 import logging
 import os
 import tempfile
-import shutil
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,7 +25,8 @@ logger.setLevel(logging.DEBUG)
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://note-transfer-gjburke.vercel.app/",
 ]
 
 app.add_middleware(
