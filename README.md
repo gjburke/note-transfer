@@ -2,7 +2,7 @@
 
 ## Current Progress
 
-You can find the website at <https://note-transfer-gjburke.vercel.app/>
+You can find the website at <https://note-transfer-gjburke.vercel.app/>. It may take a while for the service to spin up (and for processing right now).
 
 Have a website that has the proper pipelines/structure set up,
 but is very bad at transferring written notes to markdown.
