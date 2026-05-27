@@ -1,21 +1,20 @@
 from transformers import pipeline
-import cv2
 from anytree import Node, PreOrderIter
 from PIL import Image
 
 def load_text_model():
     return pipeline("image-to-text", model="microsoft/trocr-base-handwritten")
 
-def simple_filter(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    normalized = (255 * (gray / gray.max()))
-    return normalized
-
 def is_text(node):
     return node.cls_id == 3
 
 def get_text_prediction(image, model):
-    results = model(image)
+    results = model(
+        image,
+        generate_kwargs={
+            "num_beams": 4,
+        }
+    )
     result = results[0]
     text = result["generated_text"]
     return text.strip()
