@@ -12,7 +12,7 @@ def get_text_prediction(image, model):
     results = model(
         image,
         generate_kwargs={
-            "num_beams": 4,
+            "num_beams": 1,
         }
     )
     result = results[0]
