@@ -55,6 +55,13 @@ async def process_file(file: UploadFile = File(...)):
     np_image_array = np.frombuffer(contents, np.uint8)
     image = cv2.imdecode(np_image_array, cv2.IMREAD_ANYCOLOR)
 
+    if len(image.shape) == 2: # Grayscale
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+    elif image.shape[2] == 4: # BGRA
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
+    else: # Standard BGR
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
     # Pipeline to md
     segmentations = get_page_segmentations(
         image=image,

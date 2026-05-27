@@ -1,4 +1,5 @@
 from transformers import pipeline
+import cv2
 from anytree import Node, PreOrderIter
 from PIL import Image
 
@@ -9,12 +10,7 @@ def is_text(node):
     return node.cls_id == 3
 
 def get_text_prediction(image, model):
-    results = model(
-        image,
-        generate_kwargs={
-            "num_beams": 1,
-        }
-    )
+    results = model(image)
     result = results[0]
     text = result["generated_text"]
     return text.strip()
