@@ -1,4 +1,5 @@
-from transformers import TrOCRProcessor, VisionEncoderDecoderModel, GenerationConfig
+from transformers import TrOCRProcessor, GenerationConfig
+from optimum.onnxruntime import ORTModelForVision2Seq
 from peft import PeftModel
 import cv2
 import torch
@@ -9,9 +10,9 @@ import numpy as np
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-def load_text_recognition(base_model_name, lora_path):
+def load_text_recognition(base_model_name, model_path):
     processor = TrOCRProcessor.from_pretrained(base_model_name)
-    model = VisionEncoderDecoderModel.from_pretrained(base_model_name)
+    model = ORTModelForVision2Seq.from_pretrained(model_path, provider="CPUExecutionProvider")
 
     # model = PeftModel.from_pretrained(base_model, lora_path)
     # model = model.merge_and_unload()
@@ -27,8 +28,8 @@ def load_text_recognition(base_model_name, lora_path):
         decoder_start_token_id=processor.tokenizer.cls_token_id # Explicitly guide the decoder's first step
     )
 
-    model.to(DEVICE)
-    model.eval()
+    #model.to(DEVICE)
+    #model.eval()
 
     return model, processor
 

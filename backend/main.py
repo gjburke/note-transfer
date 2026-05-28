@@ -41,7 +41,7 @@ os.makedirs(FILES_FOLDER, exist_ok=True)
 
 # Load model
 # use is pipe(<image data>)
-text_model, text_processor = load_text_recognition(BASE_MODEL_NAME, LORA_PATH)
+text_model, text_processor = load_text_recognition(BASE_MODEL_NAME, ONNX_PATH)
 section_model = load_seg_model(SECTION_MODEL_PATH)
 line_model = load_seg_model(LINE_MODEL_PATH)
 
