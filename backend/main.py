@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pipeline.config import *
 from pipeline.segmentation import load_seg_model, get_page_segmentations
 from pipeline.structure import get_root, parse_page
-from pipeline.recognition import load_text_model, detect_text
+from pipeline.recognition import load_text_recognition, detect_text
 from pipeline.conversion import markdown_from_nodes
 
 # Setting up logger
@@ -41,7 +41,7 @@ os.makedirs(FILES_FOLDER, exist_ok=True)
 
 # Load model
 # use is pipe(<image data>)
-text_model = load_text_model()
+text_model, text_processor = load_text_recognition(BASE_MODEL_NAME, LORA_PATH)
 section_model = load_seg_model(SECTION_MODEL_PATH)
 line_model = load_seg_model(LINE_MODEL_PATH)
 
@@ -72,7 +72,7 @@ async def process_file(file: UploadFile = File(...)):
     document_root = get_root()
     parse_page(document_root, segmentations, image.shape[0], image.shape[1])
 
-    detect_text(document_root, text_model)
+    detect_text(document_root, text_model, text_processor)
 
     md = markdown_from_nodes(document_root)
 
