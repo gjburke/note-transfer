@@ -1,31 +1,58 @@
-from transformers import pipeline
+from transformers import TrOCRProcessor, GenerationConfig
+from optimum.onnxruntime import ORTModelForVision2Seq
+from peft import PeftModel
 import cv2
+import torch
 from anytree import Node, PreOrderIter
 from PIL import Image
+import difflib
+import numpy as np
 
-def load_text_model():
-    return pipeline("image-to-text", model="microsoft/trocr-base-handwritten")
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-def simple_filter(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    normalized = (255 * (gray / gray.max()))
-    return normalized
+def load_text_recognition(base_model_name, model_path):
+    processor = TrOCRProcessor.from_pretrained(base_model_name)
+    model = ORTModelForVision2Seq.from_pretrained(model_path, provider="CPUExecutionProvider")
+
+    # model = PeftModel.from_pretrained(base_model, lora_path)
+    # model = model.merge_and_unload()
+
+    model.generation_config = GenerationConfig(
+        max_new_tokens=64,
+        num_beams=2,                 
+        length_penalty=1.2,
+        repetition_penalty=1.2,
+        no_repeat_ngram_size=3,
+        pad_token_id=processor.tokenizer.pad_token_id,
+        eos_token_id=processor.tokenizer.eos_token_id,
+        decoder_start_token_id=processor.tokenizer.cls_token_id # Explicitly guide the decoder's first step
+    )
+
+    #model.to(DEVICE)
+    #model.eval()
+
+    return model, processor
 
 def is_text(node):
     return node.cls_id == 3
 
-def get_text_prediction(image, model):
-    results = model(image)
-    result = results[0]
-    text = result["generated_text"]
-    return text.strip()
+def get_text_prediction(image, model, processor):
+    pil_image = Image.fromarray(image).convert("RGB")
 
-def detect_text(root, model):
+    inputs = processor(images=pil_image, return_tensors="pt")
+    pixel_values = inputs.pixel_values.to(DEVICE)
+
+    with torch.no_grad():
+        generated_ids = model.generate(pixel_values)
+
+    pred_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
+    return pred_text.strip()
+
+def detect_text(root, model, processor):
     print("Detecting text")
     for node in PreOrderIter(root):
         if is_text(node):
             print(".", end='', flush=True)
             cv2_img = node.img
-            pil_img = Image.fromarray(cv2_img) 
-            text = get_text_prediction(pil_img, model)
+            text = get_text_prediction(cv2_img, model, processor)
             node.text = text

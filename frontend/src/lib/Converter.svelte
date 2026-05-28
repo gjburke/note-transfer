@@ -48,7 +48,7 @@
 
     async function processFile(formData: FormData) {
         // Send to server
-        const url = 'https://note-transfer-backend-376291047933.us-central1.run.app';
+        const url = import.meta.env.VITE_BACKEND_URL;
         const result = await fetch(url + '/process_file/', {
             method: 'post',
             body: formData,

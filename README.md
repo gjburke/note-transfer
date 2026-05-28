@@ -4,6 +4,30 @@
 
 You can find the website at <https://note-transfer-gjburke.vercel.app/>. It may take a while for the service to spin up (and for processing right now).
 
+---
+
+Everything below this section is where I'll leave this project.
+
+I have about 20 commits of experiementation and trying to figure out how to fine-tune and improve this pipeline.
+
+Probably off of my own inexperience (maybe there's more data I can train on, maybe I'm doing it wrong, not sure)
+I have not been able to get the fully system any better.
+
+I have:
+
+- Done extensive LoRA fine-tuning and testing (with an admittidly small, hundreds of examples dataset)
+- Tried different generation and model parameters
+- Tried padding, splitting into smaller pieces, other structural changes
+
+The last things I will do:
+
+- Restructure the inference so it's more efficient
+- Take a look at how I deploy it so it'll be quicker
+
+I'll get the latency down, but the performance is something I'd need a lot more data and time to do, at least the way I'm currenly doing it. Might just make something that one-shots this with a call to one of the fronteir models sooner or later.
+
+---
+
 Have a website that has the proper pipelines/structure set up,
 but is very bad at transferring written notes to markdown.
 It still needs a lot of work on model training and fine-tuning, but
